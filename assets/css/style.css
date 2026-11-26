@@ -7,28 +7,47 @@
   --navy-900: #081a33;
   --navy-800: #0d2647;
   --navy-700: #13345f;
-  --blue-600: #1557b0;
-  --blue-500: #1f6fd6;
-  --cyan-400: #2ec5d3;
-  --ink: #0f1b2d;
-  --ink-2: #33445c;
-  --muted: #64748b;
-  --line: #e3e8f0;
-  --line-2: #eef2f7;
-  --bg: #f5f7fb;
-  --surface: #ffffff;
-  --accent: #0fa3b1;
-  --accent-ink: #087985;
+  --blue-600: #4f46e5;
+  --blue-500: #6366f1;
+  --cyan-400: #a5b4fc;
+  --ink: #141833;
+  --ink-2: #39406a;
+  --muted: #646b8f;
+  --line: rgba(99, 102, 241, .16);
+  --line-2: rgba(255, 255, 255, .7);
+  --bg: #eceffb;
+  --accent: #7c6cf6;
+  --accent-ink: #5b4bd6;
+  --pink: #ec4899;
   --warm: #f4a940;
+
+  /* Glass surfaces (Aurora glassmorphism) */
+  --surface: linear-gradient(135deg, rgba(255, 255, 255, .74) 0%, rgba(255, 255, 255, .42) 100%);
+  --surface-solid: rgba(255, 255, 255, .88);
+  --surface-strong: linear-gradient(135deg, rgba(255, 255, 255, .9) 0%, rgba(255, 255, 255, .72) 100%);
+  --glass-edge: rgba(255, 255, 255, .78);
+  --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .9);
+  --blur-card: blur(9px);
+  --blur-panel: blur(8px);
+  --blur-section: blur(14px);
+  --primary-grad: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --aurora-1: rgba(124, 108, 246, .26);
+  --aurora-2: rgba(236, 72, 153, .16);
+  --aurora-3: rgba(59, 130, 246, .2);
+  --section-tint: linear-gradient(180deg, rgba(221, 226, 255, .5) 0%, rgba(238, 230, 255, .42) 100%);
+  --img-plate: #ffffff;
 
   --spectrum: linear-gradient(90deg, #7c5cff 0%, #2f8cff 25%, #19c6c0 50%, #f4c542 75%, #ff6a55 100%);
 
   --radius-sm: 8px;
-  --radius: 14px;
-  --radius-lg: 22px;
-  --shadow-sm: 0 1px 2px rgba(15, 27, 45, .06), 0 1px 3px rgba(15, 27, 45, .05);
-  --shadow: 0 8px 24px -10px rgba(15, 27, 45, .18), 0 2px 6px rgba(15, 27, 45, .05);
-  --shadow-lg: 0 24px 60px -24px rgba(8, 26, 51, .35);
+  --radius: 16px;
+  --radius-lg: 24px;
+  --shadow-sm: var(--glass-hi), 0 6px 18px -10px rgba(79, 70, 229, .22);
+  --shadow: var(--glass-hi), 0 16px 36px -16px rgba(79, 70, 229, .34);
+  --shadow-lg: var(--glass-hi), 0 30px 70px -30px rgba(67, 56, 202, .5);
+  --glow-pink: 0 22px 60px -26px rgba(236, 72, 153, .55);
+
+  color-scheme: light;
 
   --container: 1200px;
   --header-h: 72px;
@@ -749,3 +768,240 @@ a.news-card:hover { border-color: rgba(31, 111, 214, .3); box-shadow: var(--shad
 .back-top.show { opacity: 1; transform: none; pointer-events: auto; }
 .back-top:hover { background: var(--blue-600); }
 .back-top svg { width: 20px; height: 20px; }
+
+/* =========================================================
+   Aurora glass theme
+   Translucent white-gradient glass over a soft blue-violet aurora.
+   Page structure, hero backgrounds and photos are untouched.
+   ========================================================= */
+
+/* Fixed aurora layer behind everything (gives the glass something to blur). */
+body { position: relative; isolation: isolate; }
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(900px 640px at 8% 12%, var(--aurora-1), transparent 62%),
+    radial-gradient(760px 560px at 96% 38%, var(--aurora-2), transparent 62%),
+    radial-gradient(1000px 700px at 46% 104%, var(--aurora-3), transparent 64%),
+    var(--bg);
+}
+
+/* --- Feature lists / cards: glass + 1px white edge + blur(9px) --- */
+.r-card, .person, .pub, .news-card, .inst, .honor, .link-card, .position-card,
+.pub-mini a.pm, .album-grid figure, .scholar-link, .chip, .year-nav-list button,
+.search input, .icon-btn, .btn-outline {
+  background: var(--surface);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: var(--blur-card);
+  backdrop-filter: var(--blur-card);
+}
+.r-card, .person, .pub, .news-card, .inst, .honor, .link-card, .position-card,
+.pub-mini a.pm, .album-grid figure { box-shadow: var(--shadow-sm); }
+.r-card:hover, .person:hover, .inst:hover, .pub:hover, a.news-card:hover,
+.link-card:hover, .pub-mini a.pm:hover {
+  border-color: #fff; box-shadow: var(--shadow), 0 18px 44px -28px rgba(236, 72, 153, .4);
+}
+
+/* --- Standalone panels: blur(8px) + inner highlight + soft pink glow --- */
+.stats-card, .carousel-viewport, .pi-card, .profile-card, .address-card, .figure {
+  background: var(--surface);
+  border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: var(--blur-panel);
+  backdrop-filter: var(--blur-panel);
+  box-shadow: var(--shadow-lg), var(--glow-pink);
+}
+.pi-card::after { background: radial-gradient(420px 280px at 100% 0%, rgba(236, 72, 153, .14), transparent 70%); }
+/* The stats panel straddles the dark hero edge, so it needs a denser glass to stay readable. */
+.stats-card { background: var(--surface-strong); }
+.stat + .stat::before { background: var(--line); }
+
+/* Images keep their own (mostly white) plates; never recoloured. */
+.carousel-viewport, .carousel-slide, .r-card-media, .pub-thumb, .inst-img, .pm-thumb, .pm-thumb img, .figure img { background: var(--img-plate); }
+.r-card-media { border-bottom-color: var(--glass-edge); }
+
+/* Dark glass card on light sections */
+.hiring-card {
+  background:
+    radial-gradient(520px 260px at 100% 0%, rgba(236, 72, 153, .28), transparent 60%),
+    radial-gradient(420px 260px at 0% 100%, rgba(124, 108, 246, .32), transparent 60%),
+    rgba(20, 22, 58, .86);
+  border: 1px solid rgba(255, 255, 255, .14);
+  -webkit-backdrop-filter: var(--blur-panel);
+  backdrop-filter: var(--blur-panel);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), var(--shadow-lg), var(--glow-pink);
+}
+.contact-list li { background: rgba(255, 255, 255, .07); border-color: rgba(255, 255, 255, .12); }
+
+/* --- Content sections: light blue-violet tint + blur(14px) --- */
+.section-alt {
+  background: var(--section-tint);
+  -webkit-backdrop-filter: var(--blur-section);
+  backdrop-filter: var(--blur-section);
+  border-top: 1px solid var(--glass-edge);
+  border-bottom: 1px solid var(--glass-edge);
+}
+
+/* --- Header & sticky bars --- */
+.site-header {
+  background: rgba(255, 255, 255, .58);
+  border-bottom: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: saturate(170%) var(--blur-section);
+  backdrop-filter: saturate(170%) var(--blur-section);
+}
+.site-header.is-transparent { background: transparent; border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.site-header.is-scrolled { box-shadow: var(--glass-hi), 0 10px 30px -20px rgba(67, 56, 202, .45); }
+.toolbar {
+  background: linear-gradient(180deg, rgba(236, 239, 251, .82), rgba(236, 239, 251, .6));
+  -webkit-backdrop-filter: var(--blur-section);
+  backdrop-filter: var(--blur-section);
+}
+@media (max-width: 960px) {
+  .nav {
+    background: var(--surface-solid); border-bottom: 1px solid var(--glass-edge);
+    -webkit-backdrop-filter: var(--blur-section); backdrop-filter: var(--blur-section);
+    box-shadow: var(--shadow-lg);
+  }
+  .nav a.active { background: rgba(99, 102, 241, .1); }
+  .nav a.nav-cta, .is-transparent .nav a.nav-cta { background: var(--primary-grad); color: #fff; }
+  .toc { background: var(--surface); border: 1px solid var(--glass-edge); -webkit-backdrop-filter: var(--blur-card); backdrop-filter: var(--blur-card); box-shadow: var(--shadow-sm); }
+}
+
+/* --- Buttons, chips, active states: blue-violet; hero CTA stays white --- */
+.btn-primary { background: #fff; color: #2b2a6b; box-shadow: 0 10px 30px -12px rgba(236, 72, 153, .55); }
+.btn-primary:hover { background: #fff; color: #4f46e5; box-shadow: 0 14px 36px -12px rgba(236, 72, 153, .7); }
+.btn-ghost { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .4);
+  -webkit-backdrop-filter: var(--blur-card); backdrop-filter: var(--blur-card); }
+.btn-dark, .nav a.nav-cta { background: var(--primary-grad); color: #fff; box-shadow: 0 10px 24px -12px rgba(79, 70, 229, .7); }
+.btn-dark:hover, .nav a.nav-cta:hover { background: var(--primary-grad); filter: brightness(1.08); color: #fff; }
+.is-transparent .nav a.nav-cta { background: #fff; color: #2b2a6b; box-shadow: none; }
+.btn-outline:hover { border-color: #fff; color: var(--blue-600); }
+.chip:hover, .year-nav-list button:hover { border-color: #fff; color: var(--blue-600); box-shadow: var(--shadow-sm); }
+.chip.active, .year-nav-list button.active {
+  background: var(--primary-grad); border-color: transparent; color: #fff; box-shadow: 0 8px 20px -10px rgba(79, 70, 229, .7);
+}
+.carousel-dots button { background: rgba(99, 102, 241, .2); }
+.carousel-dots button.active { background: var(--primary-grad); }
+.icon-btn:hover { background: var(--primary-grad); border-color: transparent; color: #fff; }
+.mini-link { background: rgba(99, 102, 241, .1); color: var(--blue-600); }
+.mini-link:hover { background: var(--primary-grad); color: #fff; }
+.back-top { background: var(--primary-grad); box-shadow: 0 12px 28px -12px rgba(79, 70, 229, .8); }
+.back-top:hover { background: var(--primary-grad); filter: brightness(1.1); }
+.search input:focus { border-color: #fff; box-shadow: 0 0 0 4px rgba(124, 108, 246, .22); }
+.hero-kicker, .hero-topics span {
+  background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .18);
+  -webkit-backdrop-filter: var(--blur-card); backdrop-filter: var(--blur-card);
+}
+
+/* --- Accents --- */
+.tag { background: rgba(124, 108, 246, .14); color: var(--accent-ink); }
+.tag.paper { background: rgba(79, 70, 229, .12); color: var(--blue-600); }
+.tag.event { background: rgba(236, 72, 153, .12); color: #be185d; }
+.callout { background: rgba(124, 108, 246, .08); border-left-color: var(--accent); }
+.position-card .ic { background: rgba(124, 108, 246, .14); color: var(--accent-ink); }
+.person-photo { background: linear-gradient(135deg, rgba(221, 226, 255, .9), rgba(246, 240, 255, .9)); }
+.person-photo .initials { color: rgba(79, 70, 229, .3); }
+.news-year-label { color: transparent; -webkit-text-stroke: 1px rgba(99, 102, 241, .35); }
+.timeline li::before { background: var(--surface-solid); }
+.about-text p:first-of-type::first-letter { font-family: var(--font-sans); font-weight: 700; color: var(--blue-600); }
+.profile-card .cn { font-family: var(--font-sans); }
+:focus-visible { outline-color: var(--accent); }
+.mosaic figure { background: rgba(221, 226, 255, .6); }
+
+/* --- Small screens: single-column reflow by content, comfortable touch targets --- */
+@media (max-width: 600px) {
+  .container { padding: 0 16px; }
+  .section { padding: 64px 0; }
+  .people-grid:not(.compact):not(.wide) { grid-template-columns: 1fr; gap: 12px; }
+  .people-grid:not(.compact):not(.wide) .person { flex-direction: row; }
+  .people-grid:not(.compact):not(.wide) .person-photo { aspect-ratio: auto; width: 108px; min-height: 136px; flex: none; }
+  .people-grid.wide .person-photo { width: 108px; min-height: 140px; }
+  .pub-mini a.pm { grid-template-columns: 88px 1fr; gap: 12px; }
+  .news-item { grid-template-columns: 60px 1fr; gap: 12px; }
+  .chip, .year-nav-list button { min-height: 40px; }
+  .mini-link { min-height: 32px; padding: 6px 12px; }
+  .hiring-card, .address-card { padding: 22px; }
+  .contact-list li { flex-wrap: wrap; }
+}
+@media (max-width: 360px) {
+  .stats-card { grid-template-columns: 1fr; }
+  .stat + .stat::before { display: none; }
+  .stat:nth-child(n+2) { border-top: 1px solid var(--line); }
+  .mosaic { grid-template-columns: 1fr; }
+  .mosaic figure:nth-child(1) { grid-column: span 1; grid-row: span 1; }
+}
+
+/* --- Dark mode: only surfaces and aurora overlays change; photos are never inverted --- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ink: #e8eaff;
+    --ink-2: #c3c7ea;
+    --muted: #959bc2;
+    --line: rgba(165, 180, 252, .16);
+    --line-2: rgba(255, 255, 255, .1);
+    --bg: #0a0d20;
+    --blue-600: #a5b4fc;
+    --blue-500: #818cf8;
+    --accent: #a78bfa;
+    --accent-ink: #c4b5fd;
+    --surface: linear-gradient(135deg, rgba(48, 52, 104, .58) 0%, rgba(26, 28, 66, .4) 100%);
+    --surface-solid: rgba(20, 22, 52, .92);
+    --surface-strong: linear-gradient(135deg, rgba(40, 44, 96, .86) 0%, rgba(24, 26, 62, .78) 100%);
+    --glass-edge: rgba(255, 255, 255, .12);
+    --glass-hi: inset 0 1px 0 rgba(255, 255, 255, .1);
+    --aurora-1: rgba(99, 102, 241, .28);
+    --aurora-2: rgba(236, 72, 153, .14);
+    --aurora-3: rgba(59, 130, 246, .16);
+    --section-tint: linear-gradient(180deg, rgba(40, 44, 100, .38) 0%, rgba(54, 32, 92, .3) 100%);
+    --img-plate: #ffffff;
+    --shadow-sm: var(--glass-hi), 0 8px 22px -12px rgba(0, 0, 0, .6);
+    --shadow: var(--glass-hi), 0 18px 40px -18px rgba(0, 0, 0, .7);
+    --shadow-lg: var(--glass-hi), 0 30px 70px -30px rgba(0, 0, 0, .8);
+    --glow-pink: 0 24px 64px -30px rgba(236, 72, 153, .45);
+  }
+  a:hover { color: #fff; }
+  .site-header { background: rgba(14, 16, 40, .62); }
+  .site-header.is-transparent { background: transparent; }
+  .toolbar { background: linear-gradient(180deg, rgba(10, 13, 32, .85), rgba(10, 13, 32, .6)); }
+  .chip:hover, .year-nav-list button:hover, .btn-outline:hover { border-color: rgba(255, 255, 255, .3); color: #fff; }
+  .r-card:hover, .person:hover, .inst:hover, .pub:hover, a.news-card:hover,
+  .link-card:hover, .pub-mini a.pm:hover { border-color: rgba(255, 255, 255, .26); }
+  .search input::placeholder { color: var(--muted); }
+  .mini-link { background: rgba(165, 180, 252, .12); }
+  .tag { background: rgba(167, 139, 250, .18); }
+  .tag.paper { background: rgba(129, 140, 248, .18); color: #c7d2fe; }
+  .tag.event { background: rgba(236, 72, 153, .18); color: #f9a8d4; }
+  .tag.award { background: rgba(244, 169, 64, .18); color: #fcd34d; }
+  .pub-cite mark { background: rgba(244, 197, 66, .3); }
+  .person-photo { background: linear-gradient(135deg, rgba(48, 52, 104, .9), rgba(30, 24, 70, .9)); }
+  .person-photo .initials { color: rgba(199, 210, 254, .3); }
+  .news-year-label { -webkit-text-stroke-color: rgba(165, 180, 252, .35); }
+  .mosaic figure { background: rgba(48, 52, 104, .6); }
+  .nav a:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+  .nav a.active { color: #fff; }
+  .nav a.nav-cta.active, .nav a.nav-cta { color: #fff; }
+  .is-transparent .nav a.nav-cta { color: #2b2a6b; }
+}
+
+/* --- Reduced motion: no hover lifts, no transitions --- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  .r-card:hover, .person:hover, .inst:hover, a.news-card:hover, .pub-mini a.pm:hover { transform: none; }
+  .r-card:hover .r-card-media img, .mosaic figure:hover img { transform: none; }
+  .btn:hover svg, .link-arrow:hover svg { transform: none; }
+}
+
+/* Single-column layouts must not be widened by long content (DOIs, author lists). */
+@media (max-width: 960px) {
+  .doc-layout, .pub-layout, .profile-grid, .join-grid, .about-grid, .split { grid-template-columns: minmax(0, 1fr); }
+}
+/* Carousel dots: thin bar visually, 24px-tall hit area for touch. */
+.carousel-dots button, .carousel-dots button.active { height: 24px; background: none; position: relative; }
+.carousel-dots button::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 10px; height: 4px; border-radius: 4px;
+  background: rgba(99, 102, 241, .22); transition: background .3s;
+}
+.carousel-dots button.active::before { background: var(--primary-grad); }
+.carousel-dots button:focus-visible { outline-offset: 0; }
+@media (max-width: 760px) { .pub { grid-template-columns: minmax(0, 1fr); } }
+.pub-links .mini-link, .pub-cite, .pub-title { overflow-wrap: anywhere; }
