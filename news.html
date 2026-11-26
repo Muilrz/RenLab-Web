@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>News · Ren Research Group</title>
+  <meta name="description" content="News, papers, awards and events of the Ren Research Group, Xiamen University.">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="news">
+  <header id="site-header" class="site-header is-transparent"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="hero-grid"></div>
+      <div class="page-hero-spec"></div>
+      <div class="container">
+        <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>News</span></div>
+        <h1>News</h1>
+        <p>New papers, awards, talks and group events.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="toolbar" style="position:static">
+          <div class="chips" id="news-filters"></div>
+        </div>
+        <div id="news-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="assets/data/news.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var S = window.Site, esc = S.esc, news = (window.SITE_DATA || {}).news || [];
+      var kinds = [["all", "All"], ["paper", "Papers"], ["award", "Awards"], ["event", "Events"]];
+      var state = "all", fEl = document.getElementById("news-filters"), lEl = document.getElementById("news-list");
+      fEl.innerHTML = kinds.map(function (k) {
+        var n = k[0] === "all" ? news.length : news.filter(function (x) { return S.newsKind(x.text)[0] === k[0]; }).length;
+        return '<button class="chip" data-k="' + k[0] + '">' + k[1] + ' <span class="count">' + n + "</span></button>";
+      }).join("");
+      fEl.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) { state = b.dataset.k; render(); } });
+      function render() {
+        fEl.querySelectorAll("button").forEach(function (b) { b.classList.toggle("active", b.dataset.k === state); });
+        var by = {}, order = [];
+        news.forEach(function (n) {
+          var k = S.newsKind(n.text);
+          if (state !== "all" && k[0] !== state) return;
+          var y = n.date.slice(0, 4);
+          if (!by[y]) { by[y] = []; order.push(y); }
+          var p = n.date.split("-");
+          var inner = '<span class="date">' + S.months[+p[1] - 1] + " " + p[2] + '</span><span class="text"><span class="tag ' + k[0] + '">' + k[1] + "</span>" + esc(n.text) + "</span>" +
+            (n.link ? '<span class="go">' + S.icons.ext + "</span>" : "<span></span>");
+          by[y].push(n.link ? '<a class="news-card" href="' + esc(n.link) + '" target="_blank" rel="noopener">' + inner + "</a>" : '<div class="news-card">' + inner + "</div>");
+        });
+        lEl.innerHTML = order.map(function (y) {
+          return '<div class="news-year"><div class="news-year-label">' + y + '</div><div class="news-cards">' + by[y].join("") + "</div></div>";
+        }).join("") || '<p class="empty">Nothing here yet.</p>';
+      }
+      render();
+    });
+  </script>
+</body>
+</html>

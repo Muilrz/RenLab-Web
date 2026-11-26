@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Publications · Ren Research Group</title>
+  <meta name="description" content="Full list of publications of the Ren Research Group, Xiamen University, searchable by title, author, journal and year.">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="publications">
+  <header id="site-header" class="site-header is-transparent"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="hero-grid"></div>
+      <div class="page-hero-spec"></div>
+      <div class="container">
+        <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Publications</span></div>
+        <h1>Publications</h1>
+        <p id="pub-hero-sub">Peer-reviewed articles, reviews and book chapters. * denotes corresponding author.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container pub-layout">
+        <aside class="year-nav">
+          <div class="toc-title">Filter by year</div>
+          <div class="year-nav-list" id="year-list"></div>
+          <a class="scholar-link" href="https://scholar.google.com/citations?user=YyA_cisAAAAJ&amp;hl=en" target="_blank" rel="noopener"><span data-icon="scholar"></span>Google Scholar profile</a>
+        </aside>
+
+        <div>
+          <div class="pub-tools">
+            <label class="search">
+              <span class="sr-only">Search publications</span>
+              <span data-icon="search"></span>
+              <input type="search" id="pub-search" placeholder="Search title, author, journal or DOI…" autocomplete="off">
+            </label>
+            <div class="pub-count" id="pub-count"></div>
+          </div>
+          <div id="pub-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="assets/data/publications.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script src="assets/js/publications.js"></script>
+</body>
+</html>
