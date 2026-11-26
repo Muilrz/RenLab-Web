@@ -25,7 +25,8 @@
     ["members", "members.html", "Members"],
     ["publications", "publications.html", "Publications"],
     ["news", "news.html", "News"],
-    ["lab", "lab.html", "Lab & Life"]
+    ["lab", "lab.html", "Lab Tour"],
+    ["gallery", "gallery.html", "Gallery"]
   ];
 
   var BRAND_SVG =
@@ -225,15 +226,37 @@
       [90, "top", -16, 44, 1, -10, -30, 66],   // top-right
       [12, "top", -20, 36, 2, 12, -24, 76]     // top-left
     ];
+    var now = Date.now() / 1000; // shared clock: the flow continues smoothly from page to page
     var html = patches.map(function (p, i) {
       return '<span class="fx-blob c' + p[4] + '" style="left:' + p[0] + "%;" + p[1] + ":" + p[2] + "%;--w:" + p[3] +
-        "vw;--fx:" + p[5] + "vw;--fy:" + p[6] + "px;animation-duration:" + p[7] + "s;animation-delay:" + (-i * 9) + 's"></span>';
+        "vw;--fx:" + p[5] + "vw;--fy:" + p[6] + "px;animation-duration:" + p[7] + "s;animation-delay:" + (-((now + i * 9) % p[7])).toFixed(2) + 's"></span>';
     }).join("");
     var fx = document.createElement("div");
     fx.className = "bg-fx";
     fx.setAttribute("aria-hidden", "true");
     fx.innerHTML = html;
     document.body.insertBefore(fx, document.body.firstChild);
+  }
+
+  /* ---- Liquid Glass: the specular highlight follows the pointer (fine pointers only) ---- */
+  var GLASS_SEL = ".r-card, .person, .pub, .news-card, .inst, .honor, .link-card, .position-card, .album-grid figure, " +
+    ".pi-card, .profile-card, .address-card, .hiring-card, .scholar-link, .btn-outline, .btn-ghost, .chip, " +
+    ".year-nav-list button, .icon-btn, .search input, .back-top";
+  function glassPointer() {
+    if (!window.matchMedia || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    var pending = null, last = null;
+    document.addEventListener("pointermove", function (e) {
+      var el = e.target.closest ? e.target.closest(GLASS_SEL) : null;
+      if (!el) return;
+      last = { el: el, x: e.clientX, y: e.clientY };
+      if (pending) return;
+      pending = requestAnimationFrame(function () {
+        pending = null;
+        var r = last.el.getBoundingClientRect();
+        last.el.style.setProperty("--mx", Math.round(last.x - r.left) + "px");
+        last.el.style.setProperty("--my", Math.round(last.y - r.top) + "px");
+      });
+    }, { passive: true });
   }
 
   /* ---- Small helpers shared by page scripts ---- */
@@ -249,6 +272,56 @@
   }
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+  /* ---- Page transitions ----
+     Cross-document View Transitions are declared in CSS (@view-transition).
+     Here: (a) content already on screen skips its own reveal when arriving through a transition,
+           (b) a short JS fade for browsers without support,
+           (c) prerender in-site pages on hover so the switch is near-instant. */
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var rootEl = document.documentElement;
+  var hasCrossDocVT = "onpagereveal" in window && typeof document.startViewTransition === "function";
+
+  window.addEventListener("pagereveal", function (e) {
+    if (!e.viewTransition) return;
+    rootEl.classList.add("pt-arrive");
+    var done = function () { setTimeout(function () { rootEl.classList.remove("pt-arrive"); }, 60); };
+    e.viewTransition.finished.then(done, done);
+  });
+
+  function isInternalPageLink(a, e) {
+    if (!a || a.target || a.hasAttribute("download") || e.defaultPrevented || e.button !== 0) return false;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
+    var url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || !/\.html?$|\/$/.test(url.pathname)) return false;
+    return !(url.pathname === location.pathname && url.hash); // same-page anchors scroll normally
+  }
+
+  if (!hasCrossDocVT && !reduceMotion) {
+    rootEl.classList.add("pt-fallback");
+    document.addEventListener("click", function (e) {
+      var a = e.target.closest ? e.target.closest("a[href]") : null;
+      if (!isInternalPageLink(a, e)) return;
+      e.preventDefault();
+      rootEl.classList.add("pt-leave");
+      setTimeout(function () { location.href = a.href; }, 190);
+    });
+    // Coming back via the back/forward cache: undo the fade-out
+    window.addEventListener("pageshow", function (e) { if (e.persisted) rootEl.classList.remove("pt-leave"); });
+  }
+
+  if (window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules")) {
+    var rules = document.createElement("script");
+    rules.type = "speculationrules";
+    rules.textContent = JSON.stringify({
+      prerender: [{
+        source: "document",
+        where: { and: [{ href_matches: "/*" }, { not: { selector_matches: "[target], [download]" } }] },
+        eagerness: "moderate"
+      }]
+    });
+    document.head.appendChild(rules);
+  }
+
   window.Site = {
     icons: ICONS, esc: esc, newsKind: newsKind, months: MONTHS,
     initReveal: initReveal, openLightbox: openLightbox,
@@ -260,6 +333,7 @@
     renderHeader(page);
     renderFooter();
     backgroundFx();
+    glassPointer();
     var hs = document.querySelector(".hero-spectrum");
     if (hs) heroSpectrum(hs);
     document.querySelectorAll(".page-hero-spec").forEach(pageSpectrum);

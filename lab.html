@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Lab &amp; Life · Ren Research Group</title>
-  <meta name="description" content="Laboratory facilities, instruments and group life of the Ren Research Group, Xiamen University.">
+  <title>Lab Tour · Ren Research Group</title>
+  <meta name="description" content="Laboratory facilities and instruments of the Ren Research Group, Xiamen University.">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="lab">
@@ -15,9 +15,9 @@
       <div class="hero-grid"></div>
       <div class="page-hero-spec"></div>
       <div class="container">
-        <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Lab &amp; Life</span></div>
-        <h1>Lab &amp; Life</h1>
-        <p>A tour of our laboratories and instruments — and the people and moments that make the group.</p>
+        <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Lab Tour</span></div>
+        <h1>Lab Tour</h1>
+        <p>A tour of our laboratories and the Raman, TERS and electrochemical instruments we build and use.</p>
       </div>
     </section>
 
@@ -34,24 +34,15 @@
         <div id="instruments"></div>
       </div>
     </section>
-
-    <section class="section" id="gallery">
-      <div class="container">
-        <div class="section-head reveal"><div><div class="eyebrow">Gallery</div><h2>Group life</h2><p>Annual meetings, conferences, awards and outings over the years.</p></div></div>
-        <div class="album-tabs chips" id="album-tabs"></div>
-        <div class="album-grid" id="album"></div>
-      </div>
-    </section>
   </main>
 
   <footer id="site-footer"></footer>
   <script src="assets/data/lab.js"></script>
-  <script src="assets/data/gallery.js"></script>
   <script src="assets/js/layout.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var S = window.Site, esc = S.esc, D = window.SITE_DATA || {};
-      var lab = D.lab || { photos: [], instruments: [] }, albums = D.gallery || [];
+      var lab = D.lab || { photos: [], instruments: [] };
 
       document.getElementById("lab-photos").innerHTML = lab.photos.map(function (src, i) {
         return '<figure data-zoom><img src="' + esc(src) + '" alt="Laboratory photo ' + (i + 1) + '" loading="lazy"></figure>';
@@ -66,20 +57,6 @@
             return '<figure class="inst"><div class="inst-img" data-zoom><img src="' + esc(x.img) + '" alt="' + esc(x.name) + '" loading="lazy"></div><figcaption>' + esc(x.name) + "</figcaption></figure>";
           }).join("") + "</div></div>";
       }).join("");
-
-      var tabs = document.getElementById("album-tabs"), grid = document.getElementById("album");
-      tabs.innerHTML = albums.map(function (a, i) {
-        return '<button class="chip" data-i="' + i + '">' + esc(a.label) + ' <span class="count">' + a.photos.length + "</span></button>";
-      }).join("");
-      function show(i) {
-        tabs.querySelectorAll("button").forEach(function (b) { b.classList.toggle("active", +b.dataset.i === i); });
-        grid.innerHTML = albums[i].photos.map(function (p) {
-          var cap = p.caption || p.date ? '<figcaption>' + (p.date ? "<time>" + esc(p.date) + "</time>" : "") + esc(p.caption) + "</figcaption>" : "";
-          return '<figure><img src="' + esc(p.img) + '" alt="' + esc(p.caption || albums[i].label) + '" loading="lazy" data-zoom>' + cap + "</figure>";
-        }).join("");
-      }
-      tabs.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) show(+b.dataset.i); });
-      if (albums.length) show(0);
       S.initReveal();
     });
   </script>

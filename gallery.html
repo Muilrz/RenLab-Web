@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gallery · Ren Research Group</title>
+  <meta name="description" content="Group life of the Ren Research Group, Xiamen University: annual meetings, conferences, awards and outings over the years.">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="gallery">
+  <header id="site-header" class="site-header is-transparent"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="hero-grid"></div>
+      <div class="page-hero-spec"></div>
+      <div class="container">
+        <div class="crumbs"><a href="index.html">Home</a><span>/</span><span>Gallery</span></div>
+        <h1>Gallery</h1>
+        <p>Annual meetings, conferences, awards and outings over the years.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="album-tabs chips" id="album-tabs" role="tablist" aria-label="Albums by year"></div>
+        <div class="album-grid" id="album"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="assets/data/gallery.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var S = window.Site, esc = S.esc, albums = (window.SITE_DATA || {}).gallery || [];
+      var tabs = document.getElementById("album-tabs"), grid = document.getElementById("album");
+
+      tabs.innerHTML = albums.map(function (a, i) {
+        return '<button class="chip" role="tab" data-i="' + i + '">' + esc(a.label) + ' <span class="count">' + a.photos.length + "</span></button>";
+      }).join("");
+
+      function show(i) {
+        tabs.querySelectorAll("button").forEach(function (b) {
+          var on = +b.dataset.i === i;
+          b.classList.toggle("active", on);
+          b.setAttribute("aria-selected", on);
+        });
+        grid.innerHTML = albums[i].photos.map(function (p) {
+          var cap = p.caption || p.date ? '<figcaption>' + (p.date ? "<time>" + esc(p.date) + "</time>" : "") + esc(p.caption) + "</figcaption>" : "";
+          return '<figure><img src="' + esc(p.img) + '" alt="' + esc(p.caption || albums[i].label) + '" loading="lazy" data-zoom>' + cap + "</figure>";
+        }).join("");
+      }
+
+      // Allow deep links such as gallery.html#2019
+      var start = 0, h = decodeURIComponent(location.hash.slice(1));
+      albums.forEach(function (a, i) { if (h && a.label.indexOf(h) === 0) start = i; });
+      tabs.addEventListener("click", function (e) {
+        var b = e.target.closest("button");
+        if (!b) return;
+        show(+b.dataset.i);
+        history.replaceState(null, "", "#" + albums[+b.dataset.i].label.split(" ")[0]);
+      });
+      if (albums.length) show(start);
+    });
+  </script>
+</body>
+</html>

@@ -20,7 +20,8 @@ Then open http://localhost:8765/. Opening the HTML file directly also works, but
 | `pi.html` | Prof. Ren's profile |
 | `publications.html` | All papers: filter by year, full-text search |
 | `news.html` | News timeline, filterable by type |
-| `lab.html` | Lab photos, instruments, group-life albums by year |
+| `lab.html` | Lab Tour: lab photos and instruments |
+| `gallery.html` | Gallery: group-life albums by year |
 | `join.html` | Recruitment, contacts, useful links |
 
 ## Directory layout

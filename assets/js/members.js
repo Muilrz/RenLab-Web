@@ -28,15 +28,14 @@ document.addEventListener("DOMContentLoaded", function () {
   if (pi) {
     document.getElementById("pi").innerHTML =
       '<div class="pi-photo"><img src="' + esc(pi.photo) + '" alt="Prof. Bin Ren"></div>' +
-      '<div><div class="eyebrow">Principal Investigator</div><h2>Prof. Bin Ren <span style="font-family:var(--font-serif);font-weight:400;color:var(--muted);font-size:.7em">任斌</span></h2>' +
-      '<div class="pi-role">Changjiang Scholar Professor · Dean, College of Chemistry and Chemical Engineering</div>' +
-      '<ul class="pi-facts">' +
-      "<li>Professor, Xiamen University (2004 – )</li>" +
-      "<li>Changjiang Scholar Professor (2016 – )</li>" +
-      "<li>AvH Fellow, Fritz-Haber Institute, Germany</li>" +
-      "<li>Visiting Scholar, CASI, City College of New York</li>" +
-      "<li>Ph.D., Xiamen University (1998)</li>" +
-      "<li>Fellow of ISE, CCS and RSC</li></ul>" +
+      '<div><div class="eyebrow">Principal Investigator</div><h2>Prof. Bin Ren</h2>' +
+      '<ul class="pi-facts pi-facts-cv">' +
+      "<li>Professor, Xiamen Univ. (2004 – )</li>" +
+      "<li>Changjiang Scholar Professor (2016 –)</li>" +
+      "<li>AvH Fellow, Fritz-Haber Institute, Germany (2002-2003，2004)</li>" +
+      "<li>Visiting Scholar, CASI, City College of New York, USA (1997-1998)</li>" +
+      "<li>Ph.D., Xiamen Univ. (1998)</li>" +
+      "<li>B.Sc., Xiamen Univ. (1992).</li></ul>" +
       '<div style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-dark" href="pi.html">Full profile ' + I.arrow + "</a>" +
       '<a class="btn btn-outline" href="mailto:bren@xmu.edu.cn">' + I.mail + " bren@xmu.edu.cn</a></div></div>";
   }
