@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   "use strict";
   var S = window.Site, esc = S.esc, I = S.icons;
   var all = (window.SITE_DATA || {}).members || [];
+  var FACULTY = (window.SITE_DATA || {}).faculty || {};
 
   var GROUPS = [
     { key: "faculty", label: "Faculty", wide: true },
@@ -9,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     { key: "phd", label: "Ph.D. Students" },
     { key: "master", label: "Master Students" },
     { key: "visiting", label: "Visiting Professors", wide: true },
-    { key: "collaborator", label: "Collaborators", compact: true },
+    { key: "collaborator", label: "Collaborators", wide: true },
     { key: "alumni", label: "Alumni", compact: true }
   ];
   var FILTERS = [
@@ -59,7 +60,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     var foot = [];
     if (m.email) foot.push('<a class="mini-link" href="mailto:' + esc(m.email) + '" title="' + esc(m.email) + '">' + I.mail + "Email</a>");
-    if (m.more) foot.push('<a class="mini-link" href="' + esc(m.more) + '" target="_blank" rel="noopener">' + I.user + "Profile</a>");
+    // Faculty profiles live on this site (faculty.html); others still link to their external pages.
+    var slug = m.name.replace(/^(Assoc\. Prof\.|Prof\.|Dr\.)\s*/i, "").toLowerCase().replace(/\s+/g, "-");
+    if (m.group === "faculty" && FACULTY[slug]) {
+      foot.push('<a class="mini-link" href="faculty.html?p=' + encodeURIComponent(slug) + '">' + I.user + "Profile</a>");
+    } else if (m.more) {
+      foot.push('<a class="mini-link" href="' + esc(m.more) + '" target="_blank" rel="noopener">' + I.user + "Profile</a>");
+    }
     return '<article class="person">' +
       '<div class="person-photo"><span class="initials">' + esc(initials(m.name)) + "</span>" +
       (m.photo ? '<img src="' + esc(m.photo) + '" alt="' + esc(m.name) + '" loading="lazy" onerror="this.remove()">' : "") +

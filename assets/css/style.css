@@ -1565,32 +1565,40 @@ main > h1.sr-only + .section { padding-top: calc(var(--header-h) + 40px); }
 /* =========================================================
    Page transitions
    Cross-document View Transitions (Chrome/Edge 126+, Safari 18.2+):
-   the old page eases back and fades, the new page rises in; the header and
-   background stay put and the selected nav "thumb" slides to its new tab.
-   Browsers without support get a short JS fade (html.pt-fallback).
+   the header and background stay put, the selected nav "thumb" slides to its new tab
+   and the page content cross-fades underneath. Needs http(s), not file://.
    ========================================================= */
 @view-transition { navigation: auto; }
 
 .site-header { view-transition-name: site-header; }
-.bg-fx { view-transition-name: bg-fx; }
+/* The background light is NOT given its own transition name: named elements are lifted into the
+   transition overlay above the page, which made the light flash on top while switching pages. */
 .nav a.active { view-transition-name: nav-thumb; }
 
-::view-transition-old(root) { animation: pt-out .26s cubic-bezier(.4, 0, 1, 1) both; }
-::view-transition-new(root) { animation: pt-in .55s cubic-bezier(.22, 1, .36, 1) both; }
-::view-transition-group(nav-thumb) { animation-duration: .5s; animation-timing-function: cubic-bezier(.34, 1.25, .64, 1); }
-::view-transition-old(site-header), ::view-transition-new(site-header),
-::view-transition-old(bg-fx), ::view-transition-new(bg-fx) { animation: none; }
-@keyframes pt-out { to { opacity: 0; transform: scale(.985); } }
-@keyframes pt-in { from { opacity: 0; transform: translateY(18px) scale(.995); } }
+::view-transition-old(root) { animation: pt-out .22s ease-in both; }
+::view-transition-new(root) { animation: pt-in .42s ease-out .08s both; }
+/* The selected tab slides to its new position with a little spring — the main visible motion */
+::view-transition-group(nav-thumb) { animation-duration: .6s; animation-timing-function: cubic-bezier(.34, 1.45, .64, 1); }
+::view-transition-old(nav-thumb), ::view-transition-new(nav-thumb) { animation-duration: .3s; height: 100%; }
+::view-transition-old(site-header), ::view-transition-new(site-header) { animation: none; }
+@keyframes pt-out { to { opacity: 0; } }
+@keyframes pt-in { from { opacity: 0; } }
 
 /* Arriving through a view transition: content already in view appears with the page, not a second time */
 html.pt-arrive .reveal { transition: none !important; }
 
-/* Fallback for browsers without cross-document view transitions */
-html.pt-fallback main, html.pt-fallback .site-footer { animation: pt-in .5s cubic-bezier(.22, 1, .36, 1) both; }
-html.pt-fallback.pt-leave main, html.pt-fallback.pt-leave .site-footer { animation: pt-out .2s cubic-bezier(.4, 0, 1, 1) both; }
 
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
-  html.pt-fallback main, html.pt-fallback .site-footer { animation: none !important; }
+}
+
+/* --- Member cards in row layouts: photos keep a 3:4 portrait shape instead of stretching with the text --- */
+.people-grid.wide .person-photo, .people-grid.compact .person-photo {
+  align-self: flex-start; height: auto; min-height: 0; aspect-ratio: 3 / 4;
+}
+.people-grid.wide .person-photo { width: 120px; }
+.people-grid.compact .person-photo { width: 84px; }
+.people-grid.wide .person-body { padding: 16px 18px 16px 16px; }
+@media (max-width: 600px) {
+  .people-grid.wide .person-photo { width: 100px; min-height: 0; }
 }

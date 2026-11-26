@@ -273,41 +273,17 @@
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   /* ---- Page transitions ----
-     Cross-document View Transitions are declared in CSS (@view-transition).
+     Cross-document View Transitions are declared in CSS (@view-transition); they need the site to be
+     served over http(s) — not opened as file:// — and Chrome/Edge 126+ or Safari 18.2+.
      Here: (a) content already on screen skips its own reveal when arriving through a transition,
-           (b) a short JS fade for browsers without support,
-           (c) prerender in-site pages on hover so the switch is near-instant. */
-  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+           (b) prerender in-site pages on hover so the switch is near-instant. */
   var rootEl = document.documentElement;
-  var hasCrossDocVT = "onpagereveal" in window && typeof document.startViewTransition === "function";
-
   window.addEventListener("pagereveal", function (e) {
     if (!e.viewTransition) return;
     rootEl.classList.add("pt-arrive");
     var done = function () { setTimeout(function () { rootEl.classList.remove("pt-arrive"); }, 60); };
     e.viewTransition.finished.then(done, done);
   });
-
-  function isInternalPageLink(a, e) {
-    if (!a || a.target || a.hasAttribute("download") || e.defaultPrevented || e.button !== 0) return false;
-    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return false;
-    var url = new URL(a.href, location.href);
-    if (url.origin !== location.origin || !/\.html?$|\/$/.test(url.pathname)) return false;
-    return !(url.pathname === location.pathname && url.hash); // same-page anchors scroll normally
-  }
-
-  if (!hasCrossDocVT && !reduceMotion) {
-    rootEl.classList.add("pt-fallback");
-    document.addEventListener("click", function (e) {
-      var a = e.target.closest ? e.target.closest("a[href]") : null;
-      if (!isInternalPageLink(a, e)) return;
-      e.preventDefault();
-      rootEl.classList.add("pt-leave");
-      setTimeout(function () { location.href = a.href; }, 190);
-    });
-    // Coming back via the back/forward cache: undo the fade-out
-    window.addEventListener("pageshow", function (e) { if (e.persisted) rootEl.classList.remove("pt-leave"); });
-  }
 
   if (window.HTMLScriptElement && HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules")) {
     var rules = document.createElement("script");

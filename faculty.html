@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Faculty · Ren Research Group</title>
+  <meta name="description" content="Faculty profile, Ren Research Group, Xiamen University.">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="members">
+  <header id="site-header" class="site-header is-transparent"></header>
+
+  <main>
+    <section class="page-hero">
+      <div class="hero-grid"></div>
+      <div class="page-hero-spec"></div>
+      <div class="container">
+        <div class="crumbs"><a href="index.html">Home</a><span>/</span><a href="members.html">Members</a><span>/</span><span id="crumb-name">Faculty</span></div>
+        <h1 id="fac-name">Faculty</h1>
+        <p id="fac-title"></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container" id="fac-body"></div>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+  <script src="assets/data/faculty.js"></script>
+  <script src="assets/js/layout.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var S = window.Site, esc = S.esc, I = S.icons;
+      var all = (window.SITE_DATA || {}).faculty || {};
+      var slug = new URLSearchParams(location.search).get("p") || "";
+      var f = all[slug];
+      var body = document.getElementById("fac-body");
+
+      if (!f) {
+        document.getElementById("fac-name").textContent = "Profile not found";
+        body.innerHTML = '<p class="empty">This profile does not exist. <a href="members.html">Back to Members</a></p>';
+        return;
+      }
+
+      document.title = f.name + " · Ren Research Group";
+      document.getElementById("crumb-name").textContent = f.name;
+      document.getElementById("fac-name").textContent = f.name;
+      document.getElementById("fac-title").textContent = f.title;
+
+      // "B.Sc., Xiamen University (2007)" -> { when: "2007", what: "B.Sc., Xiamen University" }
+      function split(line) {
+        var m = line.match(/^(.*?)\s*\(([^()]*\d{4}[^()]*)\)\s*$/);
+        return m ? { what: m[1], when: m[2] } : { what: line, when: "" };
+      }
+
+      var contact = [];
+      if (f.email) contact.push('<li><span data-icon="mail"></span><a href="mailto:' + esc(f.email) + '">' + esc(f.email) + "</a></li>");
+      if (f.address) contact.push('<li><span data-icon="pin"></span><span>' + esc(f.address) + "</span></li>");
+
+      var exp = f.experience.slice().reverse().map(function (line) {
+        var x = split(line);
+        return '<li>' + (x.when ? '<span class="when">' + esc(x.when) + "</span>" : "") + '<span class="what">' + esc(x.what) + "</span></li>";
+      }).join("");
+
+      var honors = f.honors.map(function (line) {
+        var x = split(line);
+        return '<div class="honor"><span class="y">' + esc(x.when.replace(/^.*?(\d{4}).*$/, "$1")) + '</span><span class="t">' + esc(x.what) +
+          (x.when && !/^\d{4}$/.test(x.when) ? " (" + esc(x.when) + ")" : "") + "</span></div>";
+      }).join("");
+
+      body.innerHTML =
+        '<div class="profile-grid">' +
+          '<aside class="profile-aside"><div class="profile-card">' +
+            '<div class="pi-photo"><img src="' + esc(f.photo) + '" alt="' + esc(f.name) + '"></div>' +
+            '<div class="profile-card-body"><h2>' + esc(f.name.replace(/^(Assoc\. Prof\.|Prof\.|Dr\.)\s*/, "")) + "</h2>" +
+              '<div class="cn">' + esc(f.cn) + (f.born ? " · b. " + esc(f.born) : "") + "</div>" +
+              '<ul class="kv">' + contact.join("") + "</ul></div>" +
+          "</div></aside>" +
+          '<div class="prose" style="max-width:none">' +
+            '<div class="doc-section" style="padding-bottom:48px;margin-bottom:48px"><div class="eyebrow">Career</div>' +
+              '<h2>Education &amp; working experience</h2><ol class="timeline">' + exp + "</ol></div>" +
+            (honors ? '<div class="doc-section"><div class="eyebrow">Recognition</div><h2>Honors &amp; awards</h2><div class="honor-grid">' + honors + "</div></div>" : "") +
+            '<p style="margin-top:32px"><a class="btn btn-outline" href="members.html">' + I.left + " Back to Members</a></p>" +
+          "</div>" +
+        "</div>";
+      body.querySelectorAll("[data-icon]").forEach(function (e) { e.innerHTML = I[e.getAttribute("data-icon")] || ""; });
+    });
+  </script>
+</body>
+</html>

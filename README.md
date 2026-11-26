@@ -18,6 +18,7 @@ Then open http://localhost:8765/. Opening the HTML file directly also works, but
 | `research.html` | The four research directions, with a sticky table of contents |
 | `members.html` | Members: filter by group, search, alumni |
 | `pi.html` | Prof. Ren's profile |
+| `faculty.html?p=<slug>` | Faculty profiles (data in `assets/data/faculty.js`), e.g. `faculty.html?p=xiang-wang` |
 | `publications.html` | All papers: filter by year, full-text search |
 | `news.html` | News timeline, filterable by type |
 | `lab.html` | Lab Tour: lab photos and instruments |
