@@ -1,6 +1,3 @@
-# Raw crawl of the old site: contains alumni personal email addresses, keep local only
-tools/crawl*.json
-
 # Local tool / editor state
 .claude/settings.local.json
 __pycache__/
