@@ -2,39 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
   "use strict";
   var D = window.SITE_DATA || {}, S = window.Site, esc = S.esc;
 
-  /* ---- Stats ---- */
-  var members = D.members || [];
-  var current = members.filter(function (m) { return /leader|faculty|postdoc|phd|master/.test(m.group); }).length;
-  var alumni = members.filter(function (m) { return m.group === "alumni"; }).length;
-  var stats = [
-    [(D.publications || []).length, "+", "Peer-reviewed publications"],
-    [current, "", "Current members"],
-    [alumni, "+", "Alumni worldwide"],
-    [new Date().getFullYear() - 2004, "", "Years as an independent group"]
-  ];
-  var statsEl = document.getElementById("stats");
-  statsEl.innerHTML = stats.map(function (s) {
-    return '<div class="stat"><div class="stat-num" data-to="' + s[0] + '">0<sup>' + s[1] + '</sup></div><div class="stat-label">' + s[2] + "</div></div>";
-  }).join("");
-  var counted = false;
-  function countUp() {
-    if (counted) return;
-    counted = true;
-    statsEl.querySelectorAll(".stat-num").forEach(function (el) {
-      var to = +el.getAttribute("data-to"), sup = el.querySelector("sup").outerHTML, t0 = null;
-      function step(t) {
-        if (!t0) t0 = t;
-        var k = Math.min(1, (t - t0) / 1400), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
-        el.innerHTML = v + sup;
-        if (k < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    });
-  }
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(function (e, o) { if (e[0].isIntersecting) { countUp(); o.disconnect(); } }).observe(statsEl);
-  } else countUp();
-
   /* ---- Carousel ---- */
   var slides = D.slides || [];
   var car = document.getElementById("highlights");
@@ -88,3 +55,56 @@ document.addEventListener("DOMContentLoaded", function () {
       '</div><div><div class="pm-title">' + esc(p.title) + '</div><div class="pm-journal">' + esc(journal.trim()) + "</div></div></a>";
   }).join("");
 });
+
+/* ---- Section-by-section scrolling on the home page ----
+   When scrolling stops with the screen straddling two sections, glide (in the direction the
+   user was scrolling) to the nearest section edge. Sections taller than the screen scroll
+   freely inside and only align once their edge comes into view. */
+(function () {
+  "use strict";
+  if (!document.documentElement.classList.contains("snap-page")) return;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var settled = window.scrollY, timer = null, auto = false, autoTimer = null;
+
+  function headerH() {
+    var h = document.getElementById("site-header");
+    return h ? h.offsetHeight : 0;
+  }
+  function points() {
+    var max = document.documentElement.scrollHeight - window.innerHeight, hh = headerH();
+    var pts = Array.prototype.map.call(document.querySelectorAll("main > section"), function (s) {
+      return Math.max(0, Math.min(max, Math.round(s.getBoundingClientRect().top + window.scrollY - hh)));
+    });
+    pts.unshift(0);   // page top is always a stop
+    pts.push(max);
+    return pts.filter(function (v, i, a) { return i === 0 || v > a[i - 1] + 4; });
+  }
+  function go(y) {
+    auto = true;
+    window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" });
+    clearTimeout(autoTimer);
+    autoTimer = setTimeout(function () { auto = false; settled = window.scrollY; }, reduce ? 50 : 900);
+  }
+  function snap() {
+    if (window.innerHeight < 500) { settled = window.scrollY; return; }
+    var y = window.scrollY, dir = y - settled;
+    if (Math.abs(dir) < 6) return;
+    var pts = points(), view = window.innerHeight - headerH();
+    for (var i = 0; i < pts.length - 1; i++) {
+      var top = pts[i], next = pts[i + 1];
+      if (y < top - 2 || y > next + 2) continue;
+      if (Math.abs(y - top) <= 2 || Math.abs(y - next) <= 2) break; // already aligned
+      var freeEnd = next - view;                                    // last position showing only this section
+      if (next - top > view + 40 && y <= freeEnd) break;            // inside a tall section: leave it
+      var target = dir > 0 ? next : (next - top > view + 40 ? freeEnd : top);
+      go(target);
+      return;
+    }
+    settled = y;
+  }
+  window.addEventListener("scroll", function () {
+    if (auto) return;
+    clearTimeout(timer);
+    timer = setTimeout(snap, 140);
+  }, { passive: true });
+})();

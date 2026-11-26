@@ -30,8 +30,8 @@
 
   var BRAND_SVG =
     '<svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">' +
-    '<defs><linearGradient id="bm" x1="0" x2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset=".5" stop-color="#19c6c0"/><stop offset="1" stop-color="#ff6a55"/></linearGradient></defs>' +
-    '<rect width="40" height="40" rx="11" fill="#0d2647"/>' +
+    '<defs><linearGradient id="bm" x1="0" x2="1"><stop offset="0" stop-color="#4ca3ff"/><stop offset="1" stop-color="#1a6cb3"/></linearGradient></defs>' +
+    '<rect width="40" height="40" rx="11" fill="#eef6ff" stroke="#d6e8fb"/>' +
     '<path d="M5 29 L11 28.5 L13 22 L15 28 L18 27.5 L20.5 9 L23 27 L26 26.5 L28 18 L30 26.5 L35 27" fill="none" stroke="url(#bm)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>' +
     "</svg>";
 
@@ -125,8 +125,8 @@
   }
 
   var GRAD =
-    '<defs><linearGradient id="specGrad" x1="0" x2="1"><stop offset="0" stop-color="#7c5cff"/><stop offset=".25" stop-color="#2f8cff"/><stop offset=".5" stop-color="#19c6c0"/><stop offset=".75" stop-color="#f4c542"/><stop offset="1" stop-color="#ff6a55"/></linearGradient>' +
-    '<linearGradient id="specFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#19c6c0" stop-opacity=".22"/><stop offset="1" stop-color="#19c6c0" stop-opacity="0"/></linearGradient></defs>';
+    '<defs><linearGradient id="specGrad" x1="0" x2="1"><stop offset="0" stop-color="#a9d3ff"/><stop offset=".45" stop-color="#4ca3ff"/><stop offset="1" stop-color="#2387e4"/></linearGradient>' +
+    '<linearGradient id="specFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#4ca3ff" stop-opacity=".16"/><stop offset="1" stop-color="#4ca3ff" stop-opacity="0"/></linearGradient></defs>';
 
   function heroSpectrum(el) {
     var W = 1600, H = 300, base = 280;
@@ -211,6 +211,31 @@
     window.addEventListener("scroll", function () { b.classList.toggle("show", window.scrollY > 900); }, { passive: true });
   }
 
+  /* ---- Background light: a few large, very blurred patches flowing slowly (bottom band + two near the top) ---- */
+  function backgroundFx() {
+    if (document.querySelector(".bg-fx")) return;
+    // [left %, anchored edge, offset %, width vw, colour (0 light blue, 1 sky cyan, 2 pale teal-green), drift vw, rise px, duration s]
+    var patches = [
+      [8, "bottom", -11, 42, 0, 14, 40, 58],
+      [34, "bottom", -16, 36, 1, -12, 30, 72],
+      [58, "bottom", -12, 48, 2, 16, 46, 64],
+      [84, "bottom", -15, 40, 0, -14, 36, 50],
+      [22, "bottom", -21, 54, 2, 10, 24, 80],
+      [70, "bottom", -22, 50, 1, -10, 28, 68],
+      [90, "top", -16, 44, 1, -10, -30, 66],   // top-right
+      [12, "top", -20, 36, 2, 12, -24, 76]     // top-left
+    ];
+    var html = patches.map(function (p, i) {
+      return '<span class="fx-blob c' + p[4] + '" style="left:' + p[0] + "%;" + p[1] + ":" + p[2] + "%;--w:" + p[3] +
+        "vw;--fx:" + p[5] + "vw;--fy:" + p[6] + "px;animation-duration:" + p[7] + "s;animation-delay:" + (-i * 9) + 's"></span>';
+    }).join("");
+    var fx = document.createElement("div");
+    fx.className = "bg-fx";
+    fx.setAttribute("aria-hidden", "true");
+    fx.innerHTML = html;
+    document.body.insertBefore(fx, document.body.firstChild);
+  }
+
   /* ---- Small helpers shared by page scripts ---- */
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -234,6 +259,7 @@
     var page = document.body.getAttribute("data-page");
     renderHeader(page);
     renderFooter();
+    backgroundFx();
     var hs = document.querySelector(".hero-spectrum");
     if (hs) heroSpectrum(hs);
     document.querySelectorAll(".page-hero-spec").forEach(pageSpectrum);
